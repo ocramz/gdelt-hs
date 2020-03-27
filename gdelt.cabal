@@ -35,6 +35,7 @@ library
                      , req-conduit
                      , resourcet
                      , text
+                     , time
                      , unordered-containers 
                      , zip
 
