@@ -7,13 +7,12 @@ module GDELT.V2.Parsec.Common (
   , digit
   ) where
 
-import Data.Char (digitToInt, isDigit)
+import Data.Char (digitToInt)
 import Data.List (foldl')
-import Data.Proxy (Proxy(..))
 import Data.Void (Void)
 
 -- megaparsec
-import Text.Megaparsec (MonadParsec(..), Token(..), Parsec, ParseErrorBundle, parse, parseTest, try, count, skipCount, eof, chunkToTokens)
+import Text.Megaparsec (MonadParsec(..), Token(..), Parsec, ParseErrorBundle, parseTest, try, count, skipCount)
 import Text.Megaparsec.Char (string, char, digitChar)
 import Text.Megaparsec.Char.Lexer (decimal)
 -- text

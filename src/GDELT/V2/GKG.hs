@@ -77,7 +77,7 @@ V2SOURCECOLLECTIONIDENTIFIER.(integer)   This  is  a  numeric  identifier  that 
 data SourceCollectionIdentifier = SCIWeb | SCICitationOnly | SCICore | SCIDTIC | SCIJSTOR | SCINonTextualSource deriving (Eq, Show, Enum, Generic)
 
 sourceCollectionIdentifier :: Parser SourceCollectionIdentifier
-sourceCollectionIdentifier = toEnum <$> digit
+sourceCollectionIdentifier = toEnum . subtract 1 <$> digit
 
 
 
