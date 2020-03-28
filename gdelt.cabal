@@ -1,8 +1,8 @@
 name:                gdelt
 version:             0.1.0.0
 synopsis:            GDELT V2 (Global Database of Events, Language, and Tone)
-description:         Parsers for Global Database of Events, Language, and Tone V2. GDELT is an initiative to construct a catalog of human societal-scale behavior and beliefs across all countries of the world, connecting every person, organization, location, count, theme, news source, and event across the planet into a single massive network that captures what's happening around the world, what its context is and who's involved, and how the world is feeling about it, every single day.
-homepage:            https://github.com/ocramz/gdelt
+description:         Parsers for GDELT (Global Database of Events, Language, and Tone) V2. GDELT is an initiative to construct a catalog of human societal-scale behavior and beliefs across all countries of the world, connecting every person, organization, location, count, theme, news source, and event across the planet into a single massive network that captures what's happening around the world, what its context is and who's involved, and how the world is feeling about it, every single day.
+homepage:            https://github.com/ocramz/gdelt-hs
 license:             BSD3
 license-file:        LICENSE
 author:              Marco Zocca
@@ -26,6 +26,7 @@ library
                      , binary
                      , bytestring
                      , conduit
+                     , conduit-extra
                      , containers
                      , csv-conduit
                      , hashable
@@ -37,7 +38,7 @@ library
                      , text
                      , time
                      , unordered-containers 
-                     , zip
+                     -- , zip -- https://github.com/mrkkrp/zip/issues/67
 
 -- executable gdelt
 --   default-language:    Haskell2010
