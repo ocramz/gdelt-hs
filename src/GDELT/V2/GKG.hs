@@ -7,12 +7,12 @@ This  codebook  introduces  the  GDELT  Global  Knowledge  Graph  (GKG)Version  
 -}
 module GDELT.V2.GKG where
 
-import Data.Functor (($>))
+import Data.Functor (($>), void)
 import GHC.Generics (Generic(..))
 
 
 -- megaparsec
-import Text.Megaparsec (Parsec, ParseErrorBundle, parse, parseTest, count, eof)
+import Text.Megaparsec (Parsec, ParseErrorBundle, parse, parseTest, count, option, eof)
 import Text.Megaparsec (MonadParsec(..))
 import Text.Megaparsec.Char (string, char, digitChar)
 import Text.Megaparsec.Char.Lexer (decimal)
@@ -24,12 +24,12 @@ import Data.Time.LocalTime (LocalTime(..), TimeOfDay(..))
 import Data.Time.Calendar (Day, fromGregorian)
 
 
-import GDELT.V2.Parsec.Common (Parser, ParseError, parseLocalTime)
+import GDELT.V2.Parsec.Common (Parser, ParseError, localTime)
 
 
 {- | GKGRECORDID
 
-(string)  Each  GKG  record  is  assigned  a  globally  unique  identifier.Unlike  the EVENT  system,  which  uses  semi-sequential  numbering  to  assign  numeric  IDs  to  each  event record, the GKG system uses a date-oriented serial number.  Each GKG record ID takes the form “YYYYMMDDHHMMSS-X” or “YYYYMMDDHHMMSS-TX” in which the first portion of the ID is the full  date+time  of  the  15  minute  update  batch  that  this  record  was  created  in,  followed  by  a dash,  followed  by  sequential  numbering  for  all  GKG  records  created  as  part  of  that  update batch. Records originating from a document that was translated by GDELT Translingual will have a capital “T” appearing immediately after the dash to allow filtering of English/non-English material simply by its record identifier.  Thus, the fifth GKG record created as part of the update batch   generated at   3:30AM   on   February   3,   2015   would   have   a   GKGRECORDID   of “20150203033000-5”and if it was based on a French-language document that was translated, it would have the ID “20150203033000-T5”.   This  ID  can  be  used  to  uniquely  identify  this particular  record across  the  entire  GKG  database.
+(string)  Each  GKG  record  is  assigned  a  globally  unique  identifier.Unlike  the EVENT  system,  which  uses  semi-sequential  numbering  to  assign  numeric  IDs  to  each  event record, the GKG system uses a date-oriented serial number.  Each GKG record ID takes the form “YYYYMMDDHHMMSS-X” or “YYYYMMDDHHMMSS-TX” in which the first portion of the ID is the full  date+time  of  the  15  minute  update  batch  that  this  record  was  created  in,  followed  by  a dash,  followed  by  sequential  numbering  for  all  GKG  records  created  as  part  of  that  update batch. Records originating from a document that was translated by GDELT Translingual will have a capital “T” appearing immediately after the dash to allow filtering of English/non-English material simply by its record identifier.  Thus, the fifth GKG record created as part of the update batch   generated at   3:30AM   on   February   3,   2015   would   have   a   GKGRECORDID   of “20150203033000-5”and if it was based on a French-language document that was translated, it would have the ID "20150203033000-T5".   This  ID  can  be  used  to  uniquely  identify  this particular  record across  the  entire  GKG  database.
 -}
 
 data RecordId = RecordId {
@@ -37,8 +37,13 @@ data RecordId = RecordId {
   , riTranslingual :: Bool
   , riSeqNo :: Int } deriving (Eq, Show, Generic)
 
--- parseRecordId r = do
---   dd <- parseLocal
+recordId :: Parser RecordId
+recordId = do
+  t <- localTime
+  void $ char '-'
+  tl <- translingual
+  i <- decimal
+  pure $ RecordId t tl i
 
 translingual :: Parser Bool
-translingual = char 'T' $> True
+translingual = option False (char 'T' $> True)
