@@ -3,6 +3,7 @@
 {-# language OverloadedStrings #-}
 {-# language LambdaCase #-}
 module GDELT.Download where
+
 import Control.Applicative (Alternative(..))
 import Control.Monad (void)
 import Data.Functor (($>))
@@ -21,6 +22,8 @@ import Data.Text.Encoding (decodeUtf8)
 import Data.Time.LocalTime (LocalTime(..), TimeOfDay(..))
 import Data.Time.Calendar (Day, fromGregorian)
 
+
+import GDELT.V2.Parsec.Common (Parser, ParseError)
 
 {-
 Download links to latest data from http://data.gdeltproject.org/gdeltv2/lastupdate.txt
@@ -81,37 +84,14 @@ example1 = "http://data.gdeltproject.org/gdeltv2/20200327131500.mentions.CSV.zip
 --   ext <- string ".csv.zip" <|> string ".CSV.zip"
 --   pure $ xsf (pref <> pack ymd <> "." <> s <> ext)
 
-type Parser = Parsec Void Text
 
-type ParseError = ParseErrorBundle Text Void
 
 
 -- parseYMD :: Parser Int
 -- parseYMD = count 4 digitChar >>= decimal
 
 
-parseDate :: Text -> Either ParseError LocalTime
-parseDate z = do
-  (yys, mms, dds, hs, ms, ss) <- parse chunkDate "" z
-  yy <- parse decimal "" yys
-  mm <- parse decimal "" mms
-  dd <- parse decimal "" dds
-  let day = fromGregorian yy mm dd
-  h <- parse decimal "" hs
-  m <- parse decimal "" ms
-  s <- parse decimal "" ss
-  let tod = TimeOfDay h m (fromIntegral s)
-  pure $ LocalTime day tod
 
-chunkDate :: Parser (Text, Text, Text, Text, Text, Text)
-chunkDate = do
-  yys <- count 4 digitChar
-  mms <- count 2 digitChar
-  dds <- count 2 digitChar
-  hs <- count 2 digitChar
-  ms <- count 2 digitChar
-  ss <- count 2 digitChar
-  pure (pack yys, pack mms, pack dds, pack hs, pack ms, pack ss)
 
 -- parseTy :: Parser ((Text -> GDDatasetTy Text), Text)
 -- parseTy = (string "export" $> (GDTExport, "export")) <|>

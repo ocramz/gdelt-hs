@@ -20,6 +20,7 @@ library
   hs-source-dirs:      src
   exposed-modules:     GDELT.Download
                        GDELT.V2
+                       GDELT.V2.Parsec.Common
                        GDELT.V2.GKG
   build-depends:       base >= 4.7 && < 5
                      , algebraic-graphs
@@ -29,6 +30,7 @@ library
                      , conduit-extra
                      , containers
                      , csv-conduit
+                     , exceptions
                      , hashable
                      , megaparsec
                      , microlens
