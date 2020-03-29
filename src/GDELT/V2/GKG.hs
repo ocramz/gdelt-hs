@@ -1,4 +1,5 @@
 {-# language DeriveGeneric #-}
+{-# language OverloadedStrings #-}
 {-|
 http://data.gdeltproject.org/documentation/GDELT-Global_Knowledge_Graph_Codebook-V2.1.pdf
 
@@ -102,9 +103,9 @@ V2DOCUMENTIDENTIFIER.(text)This is the unique external identifier for the source
 {-|
 V1COUNTS.(semicolon-delimited blocks, with pound symbol (“#”) delimited fields)  This is the list  of  Counts  found  in  this document.    Each  Count  found  is  separated  with  a  semicolon,  while  the  fields  within  a  Count  are  separated by the pound symbol (“#”).Unlike  the  primary  GDELT event stream, these records are not issued unique identifier numbers, nor are they dated.
 
-As an example    of    how    to    interpret    this    file,    an    entry    with    CountType=KILL,    Number=47, ObjectType=”jihadists” indicates that the article stated that 47 jihadists were killed.  This field is identical in format and population as the correspondingfield in the GKG 1.0 format.oCount  Type.(text)   This  is  the  value  of  the  NAME  field  from  the  Category  List spreadsheet indicating which category this count is of.
+As an example    of    how    to    interpret    this    file,    an    entry    with    CountType=KILL,    Number=47, ObjectType=”jihadists” indicates that the article stated that 47 jihadists were killed.  This field is identical in format and population as the correspondingfield in the GKG 1.0 format.
 
-At the time of this writing, this is most  often  AFFECT,  ARREST,  KIDNAP,  KILL,  PROTEST,  SEIZE,  or  WOUND,  though  other categories  may  appear  here  as  well  in  certain  circumstances  when  they  appear  in context with one of these categories, or as other Count categories are added over time.  A value of “PROTEST” in this field would  indicatethat  this  is  a  count  of  the  number  of protesters at a protest.
+- Count  Type.(text)   This  is  the  value  of  the  NAME  field  from  the  Category  List spreadsheet indicating which category this count is of. At the time of this writing, this is most  often  AFFECT,  ARREST,  KIDNAP,  KILL,  PROTEST,  SEIZE,  or  WOUND,  though  other categories  may  appear  here  as  well  in  certain  circumstances  when  they  appear  in context with one of these categories, or as other Count categories are added over time.  A value of “PROTEST” in this field would  indicatethat  this  is  a  count  of  the  number  of protesters at a protest.
 
 - Count.(integer)  This is the actual count being reported.  If CountType is “PROTEST” and  Number  is  126,  this means  that  the  source  article contained  a  mention  of  126 protesters.
 
@@ -119,4 +120,15 @@ At the time of this writing, this is most  often  AFFECT,  ARREST,  KIDNAP,  KIL
 - Location FeatureID.  See the documentation for V1Locations below.
 -}
 
+v21countsEx :: Text
+v21countsEx = "WOUND#3#patients#2#Alaska, United States#US#USAK#61.385#-152.268#AK;"
 
+data CountTy a = CTAffect | CTArrest | CTKidnap | CTKill | CTProtest | CTSeize | CTWound | CTOther a deriving (Eq, Show, Generic) 
+
+data CountsV1 a = CountsV1 { cCountTy :: CountTy a } deriving (Eq, Show, Generic)
+
+
+
+{-|
+V2.1COUNTS.(semicolon-delimited blocks, with pound symbol (“#”) delimited fields)  This field is identical to the V1COUNTS field except that it adds a final additional field to the end of each entry that records its approximate character offset in the document, allowing it to be associated with other entries from other “V2ENHANCED” fields (or Events) that appear in closest proximity to  it.   Note:unlike  the  other  location-related  fields,  the  Counts  field  does  NOT  add  ADM2 support at this time.  This is to maintain compatibility with assumptions that many applications make  about  the  contents  of  the  Count  field.    Those  applications  needing  ADM2  support  for Counts should cross-reference the FeatureID field of a given Count against the V2Locations field to determine its ADM2 value.
+-}
