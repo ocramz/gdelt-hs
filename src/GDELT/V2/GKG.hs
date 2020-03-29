@@ -28,6 +28,14 @@ import Data.Time.Calendar (Day, fromGregorian)
 import GDELT.V2.Parsec.Common (Parser, ParseError, localTime, digit)
 
 
+
+
+-- * Helpers
+
+hash :: Parser ()
+hash = void $ char '#'
+
+
 {- | GKGRECORDID
 
 (string)  Each  GKG  record  is  assigned  a  globally  unique  identifier.Unlike  the EVENT  system,  which  uses  semi-sequential  numbering  to  assign  numeric  IDs  to  each  event record, the GKG system uses a date-oriented serial number.  Each GKG record ID takes the form “YYYYMMDDHHMMSS-X” or “YYYYMMDDHHMMSS-TX” in which the first portion of the ID is the full  date+time  of  the  15  minute  update  batch  that  this  record  was  created  in,  followed  by  a dash,  followed  by  sequential  numbering  for  all  GKG  records  created  as  part  of  that  update batch. Records originating from a document that was translated by GDELT Translingual will have a capital “T” appearing immediately after the dash to allow filtering of English/non-English material simply by its record identifier.  Thus, the fifth GKG record created as part of the update batch   generated at   3:30AM   on   February   3,   2015   would   have   a   GKGRECORDID   of “20150203033000-5”and if it was based on a French-language document that was translated, it would have the ID "20150203033000-T5".   This  ID  can  be  used  to  uniquely  identify  this particular  record across  the  entire  GKG  database.
@@ -187,7 +195,12 @@ v1locationEx = "2#California, United States#US#USCA#36.17#-119.746#CA"
 data LocationTy = LTCountry | LTUSState | LTUSCity | LTWorldCity | LTWorldState deriving (Eq, Show, Enum, Generic)
 locationTy :: Parser LocationTy
 locationTy = toEnum . subtract 1 <$> decimal
-  
+
+-- location = do
+--   lty <- locationTy
+--   hash
+
+
 data LocationV1 = LocationV1 {
     locTy :: LocationTy
   , locFullName :: Text
