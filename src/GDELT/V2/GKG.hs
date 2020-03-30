@@ -30,7 +30,7 @@ import Data.Time.Calendar (Day, fromGregorian)
 
 
 import GDELT.V2.Parsec.Common (Parser, ParseError, localTime, digit, signedDouble, hash, semicolon,  ADM1(..), adm1, Latitude(..), latitude, Longitude(..), longitude)
-import GDELT.V2.GKG.Themes (ThemesV1(..), themesV1)
+-- import GDELT.V2.GKG.Themes (ThemesV1(..), themesV1)
 
 
 
@@ -188,18 +188,24 @@ countsV21 = do
 V1THEMES.(semi-colon-delimited)  This is the list of all Themes found in the document.  For the complete list of possible themes, see the Category List spreadsheet.  At the time of this writing there are over 275 themes currently recognized by the system.    This field is identical in format and population as the corresponding field in the GKG1.0 format.
 -}
 
-themesV1List :: Parser [ThemesV1]
-themesV1List = sepBy themesV1 semicolon
+-- themesV1List :: Parser [ThemesV1]
+-- themesV1List = sepBy themesV1 semicolon
+
+
+
 
 
 {-|
 V2ENHANCEDTHEMES.(semicolon-delimited   blocks,   with   comma-delimited   fields)      This contains a list of all GKG themes referenced in the document, along with the character offsets of approximately  where  in  the  document  they  were  found.    For  the  complete  list  of  possible themes,  see  the  Category  List  spreadsheet.    At  the  time  of  this  writing  there  are  over  300 themes currently recognized by the system.  Each theme reference is separated by a semicolon, and within each reference, the name of the theme is specified first,  followed by a comma, and then the approximate character offset of the reference of that theme in the document, allowing it  to  be associated with other entries from other “V2ENHANCED” fields that appear in closest proximity to it.  If a theme is mentioned multiple times in a document, each mention will appear separately in this field.
 -}
 
-themesV2enhanced :: Parser [(ThemesV1, Int)]
-themesV2enhanced = sepBy p semicolon
-  where
-    p = (,) <$> themesV1 <*> decimal
+-- themesV2enhanced :: Parser [(ThemesV1, Int)]
+-- themesV2enhanced = sepBy p semicolon
+--   where
+--     p = (,) <$> themesV1 <*> decimal
+
+
+
 
 
 
