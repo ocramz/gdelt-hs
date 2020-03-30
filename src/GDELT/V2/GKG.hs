@@ -9,7 +9,14 @@ Codebook : http://data.gdeltproject.org/documentation/GDELT-Global_Knowledge_Gra
 This  codebook  introduces  the  GDELT  Global  Knowledge  Graph  (GKG) Version  2.1,  which  expands GDELT’s ability to quantify global human society beyond cataloging physical occurrences towards actually representing all of the latent dimensions, geography, and network structure of the global news.  It  applies  an array  of  highly  sophisticated  natural  language  processing  algorithms to  each  document  to compute a range of codified metadata encoding key latent and contextual dimensions of the document.  To sum up the GKG in a single sentence, it connects every person, organization, location, count, theme, news source, and event across the planet into a single massive network that captures what’s happening around the world, what its context is and who’s involved, and how the world is feeling about it, every single day.
 
 -}
-module GDELT.V2.GKG where
+module GDELT.V2.GKG (
+  RecordId(..), recordId
+  , v21date
+  , SourceCollectionIdentifier(..), sourceCollectionIdentifier
+  , CountTy(..), countTy, CountsV1(..), countsV21, CountsV21(..)
+  , LocationV1(..), LocationTy(..)
+  ,
+                    ) where
 
 import Control.Applicative (Alternative(..))
 import Data.Functor (($>), void)
@@ -227,23 +234,15 @@ V1LOCATIONS.(semicolon-delimited blocks, with pound symbol (“#”) delimited f
 - Location FeatureID.  (text OR signed integer) This is the numeric GNS or GNIS FeatureID for this locationOR a textual country or ADM1 code.  More information onthese values can be found in Leetaru (2012).4Note: This field will be blank or contain a textual ADM1 code  for country or ADM1-level matches –see  above.  Note: For numeric GNS or GNIS FeatureIDs,  this field  can  contain  both  positive  and  negative  numbers,  see  Leetaru (2012) for more information on this.
 -}
 
-v1locationEx :: Text
-v1locationEx = "2#California, United States#US#USCA#36.17#-119.746#CA"
-
-data LocationTy = LTCountry | LTUSState | LTUSCity | LTWorldCity | LTWorldState deriving (Eq, Show, Enum, Generic)
-
-locationTy :: Parser LocationTy
-locationTy = toEnum . subtract 1 <$> decimal
-
-locationFullName :: Parser Text
-locationFullName = pack <$> many (letterChar <|> char ',' <|> spaceChar)
-
-locationCountryCode :: Parser Text
-locationCountryCode = pack <$> count 2 letterChar
-
-featureId :: Parser (Either Text Int)
-featureId = (Left . pack <$> count 2 letterChar) <|>
-            (Right <$> decimal)
+data LocationV1 = LocationV1 {
+    locTy :: LocationTy
+  , locFullName :: Text
+  , locCountryCode :: Text
+  , locADM1Code :: ADM1
+  , locLat :: Latitude
+  , locLon :: Longitude
+  , locFeatureId :: Either Text Int
+  } deriving (Eq, Show, Generic)
 
 locationV1 :: Parser LocationV1
 locationV1 = do
@@ -262,16 +261,28 @@ locationV1 = do
   fid <- featureId
   pure $ LocationV1 lty lfn lcc a lat lon fid
 
+v1locationEx :: Text
+v1locationEx = "2#California, United States#US#USCA#36.17#-119.746#CA"
 
-data LocationV1 = LocationV1 {
-    locTy :: LocationTy
-  , locFullName :: Text
-  , locCountryCode :: Text
-  , locADM1Code :: ADM1
-  , locLat :: Latitude
-  , locLon :: Longitude
-  , locFeatureId :: Either Text Int
-  } deriving (Eq, Show, Generic)
+data LocationTy = LTCountry | LTUSState | LTUSCity | LTWorldCity | LTWorldState deriving (Eq, Show, Enum, Generic)
+
+locationTy :: Parser LocationTy
+locationTy = toEnum . subtract 1 <$> decimal
+
+locationFullName :: Parser Text
+locationFullName = pack <$> many (letterChar <|> char ',' <|> spaceChar)
+
+locationCountryCode :: Parser Text
+locationCountryCode = pack <$> count 2 letterChar
+
+featureId :: Parser (Either Text Int)
+featureId = (Left . pack <$> count 2 letterChar) <|>
+            (Right <$> decimal)
+
+
+
+
+
 
 
 

@@ -18,11 +18,11 @@ library
   default-language:    Haskell2010
   ghc-options:         -Wall
   hs-source-dirs:      src
-  exposed-modules:     GDELT.Download
-                       GDELT.V2
+  exposed-modules:     GDELT.V2
                        GDELT.V2.Parsec.Common
                        GDELT.V2.GKG
-                       GDELT.V2.GKG.Themes
+                       -- GDELT.V2.GKG.Themes
+  other-modules:       GDELT.Download
   build-depends:       base >= 4.7 && < 5
                      , algebraic-graphs
                      , binary
