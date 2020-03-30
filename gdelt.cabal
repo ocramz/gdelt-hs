@@ -22,6 +22,7 @@ library
                        GDELT.V2
                        GDELT.V2.Parsec.Common
                        GDELT.V2.GKG
+                       GDELT.V2.GKG.Themes
   build-depends:       base >= 4.7 && < 5
                      , algebraic-graphs
                      , binary

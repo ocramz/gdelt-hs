@@ -9,7 +9,7 @@ module GDELT.V2.Parsec.Common (
   -- * places
   , ADM1(..), adm1, Latitude(..), latitude, Longitude(..), longitude
   -- * utility
-  , signedDouble, hash
+  , signedDouble, hash, semicolon
   ) where
 
 import Control.Monad (void)
@@ -20,10 +20,10 @@ import GHC.Generics (Generic(..))
 
 -- megaparsec
 import Text.Megaparsec (MonadParsec(..), Token(..), Parsec, ParseErrorBundle, parseTest, try, count, skipCount)
-import Text.Megaparsec.Char (string, char, letterChar, punctuationChar, digitChar)
+import Text.Megaparsec.Char (string, char, letterChar, digitChar)
 import Text.Megaparsec.Char.Lexer (decimal, float, signed)
 -- text
-import Data.Text (Text, pack, unpack)
+import Data.Text (Text, pack)
 -- import Data.Text.Encoding (decodeUtf8)
 -- time
 import Data.Time.LocalTime (LocalTime(..), TimeOfDay(..))
@@ -38,8 +38,9 @@ type ParseError = ParseErrorBundle Text Void
 
 -- * Utility
 
-hash :: Parser ()
+hash, semicolon :: Parser ()
 hash = void $ char '#'
+semicolon = void $ char ';'
 
 signedDouble :: RealFloat a => Parser a
 signedDouble = signed (pure ()) float
