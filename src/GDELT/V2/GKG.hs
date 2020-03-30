@@ -216,8 +216,13 @@ data LocationV1 = LocationV1 {
     locTy :: LocationTy
   , locFullName :: Text
   , locCountryCode :: Text
-  , locADM1Code :: Text
-  , locLat :: Double
-  , locLon :: Double
+  , locADM1Code :: ADM1
+  , locLat :: Latitude
+  , locLon :: Longitude
   , locFeatureId :: Either Text Int
   } deriving (Eq, Show, Generic)
+
+newtype ADM1 = ADM1 { getADM1 :: Text } deriving (Eq, Show, Generic)
+
+newtype Latitude = Latitude { getLatitude :: Double } deriving (Eq, Show, Generic)
+newtype Longitude = Longitude { getLongitude :: Double } deriving (Eq, Show, Generic)
