@@ -9,7 +9,7 @@ module GDELT.V2.Parsec.Common (
   -- * places
   , ADM1(..), adm1, Latitude(..), latitude, Longitude(..), longitude
   -- * utility
-  , signedDouble, hash, semicolon
+  , signedDouble, hash, semicolon, colon
   ) where
 
 import Control.Monad (void)
@@ -38,9 +38,10 @@ type ParseError = ParseErrorBundle Text Void
 
 -- * Utility
 
-hash, semicolon :: Parser ()
+hash, semicolon, colon :: Parser ()
 hash = void $ char '#'
 semicolon = void $ char ';'
+colon = void $ char ':'
 
 signedDouble :: RealFloat a => Parser a
 signedDouble = signed (pure ()) float

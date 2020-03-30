@@ -1,7 +1,10 @@
 {-# language DeriveGeneric #-}
 {-# language OverloadedStrings #-}
 {-|
-http://data.gdeltproject.org/documentation/GDELT-Global_Knowledge_Graph_Codebook-V2.1.pdf
+
+Data : http://data.gdeltproject.org/gkg/index.html (2013 until present)
+
+Codebook : http://data.gdeltproject.org/documentation/GDELT-Global_Knowledge_Graph_Codebook-V2.1.pdf
 
 This  codebook  introduces  the  GDELT  Global  Knowledge  Graph  (GKG) Version  2.1,  which  expands GDELT’s ability to quantify global human society beyond cataloging physical occurrences towards actually representing all of the latent dimensions, geography, and network structure of the global news.  It  applies  an array  of  highly  sophisticated  natural  language  processing  algorithms to  each  document  to compute a range of codified metadata encoding key latent and contextual dimensions of the document.  To sum up the GKG in a single sentence, it connects every person, organization, location, count, theme, news source, and event across the planet into a single massive network that captures what’s happening around the world, what its context is and who’s involved, and how the world is feeling about it, every single day.
 
@@ -100,7 +103,7 @@ V2SOURCECOMMONNAME.    (text)    This  is  a  human-friendly  identifier  of  th
 
 
 {-|
-V2DOCUMENTIDENTIFIER.(text)This is the unique external identifier for the source document.It  can  be  used  to  uniquely  identify  the  document  and  access  it  if  you  have  the  necessary subscriptions  or  authorizationsand/or  the  document  is  public access.    This  field  can  contain  a range  of values, from  URLs ofopen  web  resourcesto  textual  citationsof  print  or  broadcast materialto    DOI    identifiers    for    various    document    repositories.For    example,    if SOURCECOLLECTION is equal to 1, this field will contain a fully-qualified URL suitable for direct access.  If SOURCECOLLECTION is equal to 2, this field will contain a textual citation akin to what would  appear  in  an  academic  journal  article  referencing  that  document  (NOTE  that  the  actual citation  format  will  vary  (usually  between  APA, Chicago, Harvard,  or  MLA)  depending  on  a number of factors and no assumptions should be made on its precise formatat this time due to the  way  in  which  this  data  is  currently  provided  to  GDELT –future  efforts  will  focus  on normalization  of  this  field  to  a  standard  citation  format).   IfSOURCECOLLECTION  is  3,  the  field will  contain  a  numeric  or alpha-numeric DOI that can be typed into JSTOR’s search engine to access the document if your institution has a JSTOR subscription.
+V2DOCUMENTIDENTIFIER.(text)This is the unique external identifier for the source document.It  can  be  used  to  uniquely  identify  the  document  and  access  it  if  you  have  the  necessary subscriptions  or  authorizations and/or  the  document  is  public access.    This  field  can  contain  a range  of values, from  URLs ofopen  web  resourcesto  textual  citationsof  print  or  broadcast materialto    DOI    identifiers    for    various    document    repositories.For    example,    if SOURCECOLLECTION is equal to 1, this field will contain a fully-qualified URL suitable for direct access.  If SOURCECOLLECTION is equal to 2, this field will contain a textual citation akin to what would  appear  in  an  academic  journal  article  referencing  that  document  (NOTE  that  the  actual citation  format  will  vary  (usually  between  APA, Chicago, Harvard,  or  MLA)  depending  on  a number of factors and no assumptions should be made on its precise formatat this time due to the  way  in  which  this  data  is  currently  provided  to  GDELT –future  efforts  will  focus  on normalization  of  this  field  to  a  standard  citation  format).   IfSOURCECOLLECTION  is  3,  the  field will  contain  a  numeric  or alpha-numeric DOI that can be typed into JSTOR’s search engine to access the document if your institution has a JSTOR subscription.
 -}
 
 
@@ -266,4 +269,8 @@ data LocationV1 = LocationV1 {
 
 
 
+
+{-|
+V2ENHANCEDLOCATIONS.    (semicolon-delimited blocks, with pound symbol (“#”) delimited fields)    This  field  is  identical  to  the  V1LOCATIONS  field  with  the primary exception  of  an  extra field  appended  to  the end  of  each  location  block  after  its  FeatureID  that  lists  the  approximate character  offset  of the  reference  to  that  location  in the  text.    In  addition,  if  a  location  appears multiple  times  in  the  article,  it  will  be  listed  multiple  times  in  this  field.The  only  other modification from V1LOCATIONS is the addition of a single new field “Location ADM2Code” in between “Location ADM1Code” and “Location Latitude”. 5NOTE:there was an error in this field from  2/19/2015 through midday 3/1/2015that  caused  the  CountryCode  field to listthe wrong country code in somecases.
+-}
 
