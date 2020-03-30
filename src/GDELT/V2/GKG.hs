@@ -16,8 +16,8 @@ import GHC.Generics (Generic(..))
 -- megaparsec
 import Text.Megaparsec (Parsec, ParseErrorBundle, parse, parseTest, count, option, optional, sepBy, eof)
 import Text.Megaparsec (MonadParsec(..))
-import Text.Megaparsec.Char (string, char, digitChar)
-import Text.Megaparsec.Char.Lexer (decimal)
+import Text.Megaparsec.Char (string, char, digitChar, letterChar, punctuationChar, spaceChar)
+import Text.Megaparsec.Char.Lexer (decimal, float, signed)
 -- text
 import Data.Text (Text, pack, unpack)
 import Data.Text.Encoding (decodeUtf8)
@@ -26,15 +26,12 @@ import Data.Time.LocalTime (LocalTime(..), TimeOfDay(..))
 import Data.Time.Calendar (Day, fromGregorian)
 
 
-import GDELT.V2.Parsec.Common (Parser, ParseError, localTime, digit)
+import GDELT.V2.Parsec.Common (Parser, ParseError, localTime, digit, signedDouble, hash, ADM1(..), adm1, Latitude(..), latitude, Longitude(..), longitude)
 
 
 
 
--- * Helpers
 
-hash :: Parser ()
-hash = void $ char '#'
 
 
 {- | GKGRECORDID
@@ -204,12 +201,36 @@ v1locationEx :: Text
 v1locationEx = "2#California, United States#US#USCA#36.17#-119.746#CA"
 
 data LocationTy = LTCountry | LTUSState | LTUSCity | LTWorldCity | LTWorldState deriving (Eq, Show, Enum, Generic)
+
 locationTy :: Parser LocationTy
 locationTy = toEnum . subtract 1 <$> decimal
 
--- location = do
---   lty <- locationTy
---   hash
+locationFullName :: Parser Text
+locationFullName = pack <$> many (letterChar <|> punctuationChar <|> spaceChar)
+
+locationCountryCode :: Parser Text
+locationCountryCode = pack <$> count 2 letterChar
+
+featureId :: Parser (Either Text Int)
+featureId = (Left . pack <$> count 2 letterChar) <|>
+            (Right <$> decimal)
+
+location :: Parser LocationV1
+location = do
+  lty <- locationTy
+  hash
+  lfn <- locationFullName
+  hash
+  lcc <- locationCountryCode
+  hash
+  a <- adm1
+  hash
+  lat <- latitude
+  hash
+  lon <- longitude
+  hash
+  fid <- featureId
+  pure $ LocationV1 lty lfn lcc a lat lon fid
 
 
 data LocationV1 = LocationV1 {
@@ -222,7 +243,6 @@ data LocationV1 = LocationV1 {
   , locFeatureId :: Either Text Int
   } deriving (Eq, Show, Generic)
 
-newtype ADM1 = ADM1 { getADM1 :: Text } deriving (Eq, Show, Generic)
 
-newtype Latitude = Latitude { getLatitude :: Double } deriving (Eq, Show, Generic)
-newtype Longitude = Longitude { getLongitude :: Double } deriving (Eq, Show, Generic)
+
+
