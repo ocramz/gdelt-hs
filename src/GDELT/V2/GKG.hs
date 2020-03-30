@@ -132,8 +132,8 @@ v21countsEx = "WOUND#3#patients#2#Alaska, United States#US#USAK#61.385#-152.268#
 
 data CountTy = CTAffect | CTArrest | CTKidnap | CTKill | CTProtest | CTSeize | CTWound | CTOther Text deriving (Eq, Show, Generic)
 
-countTyP :: Parser CountTy
-countTyP = (string "AFFECT" $> CTAffect) <|>
+countTy :: Parser CountTy
+countTy = (string "AFFECT" $> CTAffect) <|>
   (string "ARREST" $> CTArrest) <|>
   (string "KIDNAP" $> CTKidnap) <|>
   (string "KILL" $> CTKill) <|>
@@ -142,10 +142,22 @@ countTyP = (string "AFFECT" $> CTAffect) <|>
   (string "WOUND" $> CTWound)
   -- (string "AFFECT" $> CTAffect)
 
-data CountsV1 a = CountsV1 {
+countsV1 :: Parser CountsV1
+countsV1 = do
+  cty <- countTy
+  hash
+  n <- decimal
+  hash
+  oty <- optional (pack <$> many letterChar)
+  hash
+  loc <- locationV1
+  pure $ CountsV1 cty n oty loc
+
+data CountsV1 = CountsV1 {
     cCountTy :: CountTy
   , cCount :: Int
   , cObjectType :: Maybe Text
+  , cLocationV1 :: LocationV1
   } deriving (Eq, Show, Generic)
 
 
@@ -154,12 +166,6 @@ data CountsV1 a = CountsV1 {
 V2.1COUNTS.(semicolon-delimited blocks, with pound symbol (“#”) delimited fields)  This field is identical to the V1COUNTS field except that it adds a final additional field to the end of each entry that records its approximate character offset in the document, allowing it to be associated with other entries from other “V2ENHANCED” fields (or Events) that appear in closest proximity to  it.   Note:unlike  the  other  location-related  fields,  the  Counts  field  does  NOT  add  ADM2 support at this time.  This is to maintain compatibility with assumptions that many applications make  about  the  contents  of  the  Count  field.    Those  applications  needing  ADM2  support  for Counts should cross-reference the FeatureID field of a given Count against the V2Locations field to determine its ADM2 value.
 -}
 
-
-
-
-{-|
-V2.1COUNTS.(semicolon-delimited blocks, with pound symbol (“#”) delimited fields)  This field is identical to the V1COUNTS field except that it adds a final additional field to the end of each entry that records its approximate character offset in the document, allowing it to be associated with other entries from other “V2ENHANCED” fields (or Events) that appear in closest proximity to  it.   Note:unlike  the  other  location-related  fields,  the  Counts  field  does  NOT  add  ADM2 support at this time.  This is to maintain compatibility with assumptions that many applications make  about  the  contents  of  the  Count  field.    Those  applications  needing  ADM2  support  for Counts should cross-reference the FeatureID field of a given Count against the V2Locations field to determine its ADM2 value. 
--}
 
 
 
@@ -206,7 +212,7 @@ locationTy :: Parser LocationTy
 locationTy = toEnum . subtract 1 <$> decimal
 
 locationFullName :: Parser Text
-locationFullName = pack <$> many (letterChar <|> punctuationChar <|> spaceChar)
+locationFullName = pack <$> many (letterChar <|> char ',' <|> spaceChar)
 
 locationCountryCode :: Parser Text
 locationCountryCode = pack <$> count 2 letterChar
@@ -215,8 +221,8 @@ featureId :: Parser (Either Text Int)
 featureId = (Left . pack <$> count 2 letterChar) <|>
             (Right <$> decimal)
 
-location :: Parser LocationV1
-location = do
+locationV1 :: Parser LocationV1
+locationV1 = do
   lty <- locationTy
   hash
   lfn <- locationFullName
