@@ -8,6 +8,7 @@ This  codebook  introduces  the  GDELT  Global  Knowledge  Graph  (GKG) Version 
 -}
 module GDELT.V2.GKG where
 
+import Control.Applicative (Alternative(..))
 import Data.Functor (($>), void)
 import GHC.Generics (Generic(..))
 
@@ -134,6 +135,16 @@ v21countsEx = "WOUND#3#patients#2#Alaska, United States#US#USAK#61.385#-152.268#
 
 data CountTy = CTAffect | CTArrest | CTKidnap | CTKill | CTProtest | CTSeize | CTWound | CTOther Text deriving (Eq, Show, Generic)
 
+countTyP :: Parser CountTy
+countTyP = (string "AFFECT" $> CTAffect) <|>
+  (string "ARREST" $> CTArrest) <|>
+  (string "KIDNAP" $> CTKidnap) <|>
+  (string "KILL" $> CTKill) <|>
+  (string "PROTEST" $> CTProtest) <|>
+  (string "SEIZE" $> CTSeize) <|>
+  (string "WOUND" $> CTWound)
+  -- (string "AFFECT" $> CTAffect)
+
 data CountsV1 a = CountsV1 {
     cCountTy :: CountTy
   , cCount :: Int
@@ -178,7 +189,7 @@ V1LOCATIONS.(semicolon-delimited blocks, with pound symbol (“#”) delimited f
 
 - Location  FullName.(text)  This  is  the  full  human-readable  name  of  the  matched location.  In the case of a country it is simply the country name.  For US and World states it is in the format of “State, Country Name”, while for all other matches it is in the format  of “City/Landmark, State, Country”.  This can be used to label locations when placing counts on a map.  Note: this field reflects the precise name used to refer to the location in the text itself, meaning it may contain multiple spellings of the same location –use the FeatureID column to determine whether two location names refer to the same place.
 
-- Location  CountryCode.    (text)  This  is  the  2-character  FIPS10-4  country  code  for  the location.   Note:GDELT  continues  to  use  the  FIPS10-4  codes  under  USG  guidancewhile GNS  continues  its  formal  transitionto the  successor  Geopolitical  Entities,  Names,  and Codes (GENC) Standard (the US Government profile of ISO 3166).
+- Location  CountryCode.    (text)  This  is  the  2-character  FIPS10-4  country  code  for  the location.   Note:GDELT  continues  to  use  the  FIPS10-4  codes  under  USG  guidance while GNS  continues  its  formal  transitionto the  successor  Geopolitical  Entities,  Names,  and Codes (GENC) Standard (the US Government profile of ISO 3166).
 
 - Location  ADM1Code.    (text)  This  is  the  2-character  FIPS10-4  country  code  followed  by the  2-character  FIPS10-4  administrative  division  1  (ADM1)  code  for  the  administrative division housing the landmark.  In the case  of the United States,  this is the 2-character shortform of the state’s name (such as “TX” for Texas).Note:see the notice above for CountryCode regarding the FIPS10-4 / GENC transition.  Note: to obtain ADM2 (district-level) assignments for locations, you can either perform a spatial join against a ShapeFile template in any GIS software, or cross-walk the FeatureID to the GNIS/GNS databases –this  will  provide  additional  fields  such as  ADM2  codes  and MGRS  grid  references for GNS.
 
@@ -209,4 +220,4 @@ data LocationV1 = LocationV1 {
   , locLat :: Double
   , locLon :: Double
   , locFeatureId :: Either Text Int
-                             } deriving (Eq, Show, Generic)
+  } deriving (Eq, Show, Generic)
