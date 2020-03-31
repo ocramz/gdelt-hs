@@ -33,7 +33,7 @@ module GDELT.V2.GKG (
   -- ** V2.1Counts
   , CountsV21(..), countsV21
   -- * LocationV1
-  , LocationV1(..), LocationTy(..)
+  , LocationV1(..), locationV1, LocationTy(..)
   ,
                     ) where
 
