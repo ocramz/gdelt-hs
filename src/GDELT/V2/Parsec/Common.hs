@@ -19,12 +19,11 @@ import Data.Void (Void)
 import GHC.Generics (Generic(..))
 
 -- megaparsec
-import Text.Megaparsec (MonadParsec(..), Token(..), Parsec, ParseErrorBundle, parseTest, try, count, skipCount)
-import Text.Megaparsec.Char (string, char, letterChar, digitChar)
-import Text.Megaparsec.Char.Lexer (decimal, float, signed)
+import Text.Megaparsec (Parsec, ParseErrorBundle, count)
+import Text.Megaparsec.Char (char, letterChar, digitChar)
+import Text.Megaparsec.Char.Lexer (float, signed)
 -- text
 import Data.Text (Text, pack)
--- import Data.Text.Encoding (decodeUtf8)
 -- time
 import Data.Time.LocalTime (LocalTime(..), TimeOfDay(..))
 import Data.Time.Calendar (Day, fromGregorian)
@@ -43,6 +42,7 @@ hash = void $ char '#'
 semicolon = void $ char ';'
 colon = void $ char ':'
 
+-- | Parses a real, signed floating-point value.
 signedDouble :: RealFloat a => Parser a
 signedDouble = signed (pure ()) float
 
@@ -81,10 +81,11 @@ tod = TimeOfDay <$> decimalBounded 2 <*> decimalBounded 2 <*> sp
   where
     sp = fromIntegral <$> decimalBounded 2
 
-
+-- | Parses a single decimal digit (0 - 9)
 digit :: Num a => Parser a
 digit = fromIntegral . digitToInt <$> digitChar
 
+-- | Parses an integer having exactly @n@ digits in its decimal representation
 decimalBounded :: Int -> Parser Int
 decimalBounded n = do
   ds <- count n digit
