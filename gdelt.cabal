@@ -27,20 +27,20 @@ library
   build-depends:       base >= 4.7 && < 5
                      -- , algebraic-graphs
                      -- , binary
-                     , bytestring
+                     , bytestring >= 0.10.8
                      -- , conduit
                      -- , conduit-extra
                      -- , containers
                      -- , csv-conduit
                      -- , exceptions
                      -- , hashable
-                     , megaparsec
+                     , megaparsec >= 7.0.5
                      -- , microlens
                      -- , req
                      -- , req-conduit
                      -- , resourcet
-                     , text
-                     , time
+                     , text >= 1.2.3
+                     , time >= 1.8.0
                      -- , unordered-containers 
                      -- , zip -- https://github.com/mrkkrp/zip/issues/67
 
